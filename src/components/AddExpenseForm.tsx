@@ -1,4 +1,6 @@
 import React, { useState } from 'react';
+import { Box, Button, Input, Text, Stack, HStack } from '@chakra-ui/react';
+import { FaPlus, FaTimes } from 'react-icons/fa';
 import type { Expense, ExpenseCategory } from '../types';
 
 interface AddExpenseFormProps {
@@ -33,122 +35,132 @@ const AddExpenseForm: React.FC<AddExpenseFormProps> = ({
   };
 
   return (
-    <form onSubmit={handleSubmit} className="expense-form">
-      <div className="form-group">
-        <label htmlFor="description">Description</label>
-        <input
-          type="text"
-          id="description"
-          value={description}
-          onChange={(e) => setDescription(e.target.value)}
-          required
-          placeholder="Enter expense description"
-        />
-      </div>
+    <Box as="form" onSubmit={handleSubmit}>
+      <Stack gap={4}>
+        <Box>
+          <Text mb={2} color="gray.600" fontWeight="medium">
+            Descripción
+          </Text>
+          <Input
+            value={description}
+            onChange={(e) => setDescription(e.target.value)}
+            placeholder="Describe tu gasto"
+            bg="gray.50"
+            border="2px"
+            borderColor="gray.200"
+            borderRadius="lg"
+            h={12}
+            _hover={{ borderColor: 'blue.300' }}
+            _focus={{ borderColor: 'blue.500', bg: 'white' }}
+            required
+          />
+        </Box>
 
-      <div className="form-group">
-        <label htmlFor="amount">Amount</label>
-        <input
-          type="number"
-          id="amount"
-          value={amount}
-          onChange={(e) => setAmount(e.target.value)}
-          required
-          min="0"
-          step="0.01"
-          placeholder="Enter amount"
-        />
-      </div>
+        <Box>
+          <Text mb={2} color="gray.600" fontWeight="medium">
+            Monto (S/)
+          </Text>
+          <Input
+            type="number"
+            value={amount}
+            onChange={(e) => setAmount(e.target.value)}
+            placeholder="0.00"
+            bg="gray.50"
+            border="2px"
+            borderColor="gray.200"
+            borderRadius="lg"
+            h={12}
+            _hover={{ borderColor: 'blue.300' }}
+            _focus={{ borderColor: 'blue.500', bg: 'white' }}
+            min="0"
+            step="0.01"
+            required
+          />
+        </Box>
 
-      <div className="form-group">
-        <label htmlFor="category">Category</label>
-        <select
-          id="category"
-          value={categoryId}
-          onChange={(e) => setCategoryId(e.target.value)}
-          required
-        >
-          <option value="">Select category</option>
-          {categories.map((category) => (
-            <option key={category.id} value={category.id}>
-              {category.name}
-            </option>
-          ))}
-        </select>
-      </div>
+        <Box>
+          <Text mb={2} color="gray.600" fontWeight="medium">
+            Categoría
+          </Text>
+          <select
+            value={categoryId}
+            onChange={(e: any) => setCategoryId(e.target.value)}
+            required
+            style={{
+              background: '#f7fafc',
+              border: '2px solid #e2e8f0',
+              borderRadius: '0.5rem',
+              height: '3rem',
+              padding: '0 12px',
+              width: '100%',
+              appearance: 'none',
+            }}
+          >
+            <option value="">Selecciona una categoría</option>
+            {categories.map((category) => (
+              <option key={category.id} value={category.id}>
+                {category.name}
+              </option>
+            ))}
+          </select>
+        </Box>
 
-      <div className="form-group">
-        <label htmlFor="date">Date</label>
-        <input
-          type="date"
-          id="date"
-          value={date}
-          onChange={(e) => setDate(e.target.value)}
-          min={`${year}-${String(month).padStart(2, '0')}-01`}
-          max={`${year}-${String(month).padStart(2, '0')}-31`}
-        />
-      </div>
+        <Box>
+          <Text mb={2} color="gray.600" fontWeight="medium">
+            Fecha
+          </Text>
+          <Input
+            type="date"
+            value={date}
+            onChange={(e) => setDate(e.target.value)}
+            bg="gray.50"
+            border="2px"
+            borderColor="gray.200"
+            borderRadius="lg"
+            h={12}
+            _hover={{ borderColor: 'blue.300' }}
+            _focus={{ borderColor: 'blue.500', bg: 'white' }}
+            min={`${year}-${String(month).padStart(2, '0')}-01`}
+            max={`${year}-${String(month).padStart(2, '0')}-31`}
+          />
+        </Box>
 
-      <div className="form-actions">
-        <button type="button" onClick={onCancel} className="cancel-button">
-          Cancel
-        </button>
-        <button type="submit" className="submit-button">
-          Add Expense
-        </button>
-      </div>
-
-      <style>{`
-        .expense-form {
-          display: flex;
-          flex-direction: column;
-          gap: 15px;
-        }
-        .form-group {
-          display: flex;
-          flex-direction: column;
-          gap: 5px;
-        }
-        label {
-          font-weight: bold;
-        }
-        input, select {
-          padding: 8px;
-          border: 1px solid #ccc;
-          border-radius: 4px;
-          font-size: 1rem;
-        }
-        .form-actions {
-          display: flex;
-          justify-content: flex-end;
-          gap: 10px;
-          margin-top: 10px;
-        }
-        .cancel-button {
-          padding: 8px 16px;
-          background-color: #6c757d;
-          color: white;
-          border: none;
-          border-radius: 4px;
-          cursor: pointer;
-        }
-        .submit-button {
-          padding: 8px 16px;
-          background-color: #007bff;
-          color: white;
-          border: none;
-          border-radius: 4px;
-          cursor: pointer;
-        }
-        .cancel-button:hover {
-          background-color: #5a6268;
-        }
-        .submit-button:hover {
-          background-color: #0056b3;
-        }
-      `}</style>
-    </form>
+        <HStack justify="flex-end" gap={3} mt={6}>
+          <Button
+            onClick={onCancel}
+            variant="ghost"
+            colorScheme="gray"
+            size="lg"
+            borderRadius="lg"
+          >
+            <HStack gap={2}>
+              <FaTimes />
+              <Text>Cancelar</Text>
+            </HStack>
+          </Button>
+          <Button
+            type="submit"
+            colorScheme="blue"
+            size="lg"
+            borderRadius="lg"
+            bgGradient="linear(to-r, blue.500, purple.500)"
+            _hover={{ 
+              bgGradient: "linear(to-r, blue.600, purple.600)",
+              transform: 'translateY(-2px)',
+              boxShadow: 'lg'
+            }}
+            _active={{ transform: 'translateY(0)' }}
+            transition="all 0.2s"
+          >
+            <HStack gap={2}>
+              <FaPlus />
+              <Text>Agregar Gasto</Text>
+            </HStack>
+          </Button>
+        </HStack>
+      </Stack>
+    </Box>
   );
 };
 
-export default AddExpenseForm; 
+export default AddExpenseForm;

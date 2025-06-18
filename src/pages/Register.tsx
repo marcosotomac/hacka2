@@ -1,6 +1,20 @@
 import React, { useState } from 'react';
 import { Link as RouterLink, useNavigate } from 'react-router-dom';
+import {
+  Box,
+  Container,
+  Heading,
+  Text,
+  Input,
+  Button,
+  Stack,
+  HStack,
+} from '@chakra-ui/react';
+import { FaEnvelope, FaLock, FaWallet, FaUserPlus, FaCheckCircle, FaTimesCircle } from 'react-icons/fa';
+import { motion } from 'framer-motion';
 import { useAuth } from '../contexts/AuthContext';
+
+const MotionBox = motion(Box);
 
 const Register: React.FC = () => {
   const [email, setEmail] = useState('');
@@ -13,19 +27,27 @@ const Register: React.FC = () => {
 
   const validatePassword = () => {
     if (password.length < 12) {
-      return 'Password must be at least 12 characters long';
+      return 'La contraseña debe tener al menos 12 caracteres';
     }
     if (password !== confirmPassword) {
-      return 'Passwords do not match';
+      return 'Las contraseñas no coinciden';
     }
     return '';
+  };
+
+  const getPasswordStrength = () => {
+    if (password.length === 0) return { label: '', color: 'gray' };
+    if (password.length < 8) return { label: 'Muy débil', color: 'red' };
+    if (password.length < 12) return { label: 'Débil', color: 'orange' };
+    if (password.length >= 12) return { label: 'Fuerte', color: 'green' };
+    return { label: '', color: 'gray' };
   };
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     const passwordError = validatePassword();
     if (passwordError) {
-      alert(passwordError);
+      setError(passwordError);
       return;
     }
 
@@ -40,125 +62,206 @@ const Register: React.FC = () => {
       } else if (err.message) {
         setError(err.message);
       } else {
-        setError('Registration failed. Please try again.');
+        setError('Error al registrarse. Inténtalo de nuevo.');
       }
     } finally {
       setIsLoading(false);
     }
   };
 
+  const passwordStrength = getPasswordStrength();
+  const passwordsMatch = password === confirmPassword && password.length > 0;
+
   return (
-    <div className="container">
-      <div className="form-container">
-        <h1>Create Account</h1>
-        <form onSubmit={handleSubmit}>
-          <div className="form-group">
-            <label htmlFor="email">Email</label>
-            <input
-              type="email"
-              id="email"
-              value={email}
-              onChange={(e) => setEmail(e.target.value)}
-              required
-            />
-          </div>
-          <div className="form-group">
-            <label htmlFor="password">Password</label>
-            <input
-              type="password"
-              id="password"
-              value={password}
-              onChange={(e) => setPassword(e.target.value)}
-              required
-            />
-            {validatePassword() && (
-              <div className="error-message">{validatePassword()}</div>
-            )}
-          </div>
-          <div className="form-group">
-            <label htmlFor="confirmPassword">Confirm Password</label>
-            <input
-              type="password"
-              id="confirmPassword"
-              value={confirmPassword}
-              onChange={(e) => setConfirmPassword(e.target.value)}
-              required
-            />
-          </div>
-          {error && <div className="error-message">{error}</div>}
-          <button type="submit" disabled={isLoading}>
-            {isLoading ? 'Loading...' : 'Register'}
-          </button>
-        </form>
-        <p>
-          Already have an account?{' '}
-          <RouterLink to="/login">Login here</RouterLink>
-        </p>
-      </div>
-      <style>{`
-        .container {
-          display: flex;
-          justify-content: center;
-          align-items: center;
-          min-height: 100vh;
-          padding: 20px;
-        }
-        .form-container {
-          width: 100%;
-          max-width: 400px;
-          padding: 20px;
-          border: 1px solid #ccc;
-          border-radius: 8px;
-          box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
-        }
-        h1 {
-          text-align: center;
-          margin-bottom: 20px;
-        }
-        .form-group {
-          margin-bottom: 15px;
-        }
-        label {
-          display: block;
-          margin-bottom: 5px;
-        }
-        input {
-          width: 100%;
-          padding: 8px;
-          border: 1px solid #ccc;
-          border-radius: 4px;
-        }
-        .error-message {
-          color: #dc3545;
-          font-size: 0.875rem;
-          margin-top: 5px;
-        }
-        button {
-          width: 100%;
-          padding: 10px;
-          background-color: #007bff;
-          color: white;
-          border: none;
-          border-radius: 4px;
-          cursor: pointer;
-        }
-        button:disabled {
-          background-color: #ccc;
-        }
-        p {
-          text-align: center;
-          margin-top: 15px;
-        }
-        a {
-          color: #007bff;
-          text-decoration: none;
-        }
-        a:hover {
-          text-decoration: underline;
-        }
-      `}</style>
-    </div>
+    <Box
+      minH="100vh"
+      bgGradient="linear(to-br, purple.400, blue.500, teal.400)"
+      display="flex"
+      alignItems="center"
+      justifyContent="center"
+      p={4}
+    >
+      <Container maxW="md">
+        <MotionBox
+          initial={{ opacity: 0, y: 20 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ duration: 0.6 }}
+        >
+          <Box
+            bg="rgba(255, 255, 255, 0.95)"
+            backdropFilter="blur(10px)"
+            borderRadius="2xl"
+            boxShadow="2xl"
+            p={8}
+            border="1px"
+            borderColor="rgba(255, 255, 255, 0.2)"
+          >
+            <Stack gap={6} align="stretch">
+              {/* Header */}
+              <Box textAlign="center">
+                <HStack justify="center" mb={4}>
+                  <Box color="purple.500" fontSize="3xl">
+                    <FaWallet />
+                  </Box>
+                  <Heading size="xl" color="gray.700">
+                    Ahorrista
+                  </Heading>
+                </HStack>
+                <Text color="gray.600" fontSize="lg">
+                  Crea tu cuenta
+                </Text>
+                <Text color="gray.500" fontSize="sm">
+                  Únete y comienza a gestionar tus finanzas
+                </Text>
+              </Box>
+
+              {/* Error Alert */}
+              {error && (
+                <Box
+                  bg="red.50"
+                  border="1px"
+                  borderColor="red.200"
+                  borderRadius="lg"
+                  p={4}
+                  color="red.700"
+                >
+                  <Text fontWeight="medium">{error}</Text>
+                </Box>
+              )}
+
+              {/* Form */}
+              <Box as="form" onSubmit={handleSubmit}>
+                <Stack gap={4}>
+                  <Box w="full">
+                    <HStack mb={2}>
+                      <Box color="gray.500">
+                        <FaEnvelope />
+                      </Box>
+                      <Text color="gray.600" fontWeight="medium">
+                        Correo Electrónico
+                      </Text>
+                    </HStack>
+                    <Input
+                      type="email"
+                      value={email}
+                      onChange={(e) => setEmail(e.target.value)}
+                      placeholder="tu@email.com"
+                      bg="gray.50"
+                      border="2px"
+                      borderColor="gray.200"
+                      borderRadius="lg"
+                      h={12}
+                      _hover={{ borderColor: 'purple.300' }}
+                      _focus={{ borderColor: 'purple.500', bg: 'white' }}
+                      required
+                    />
+                  </Box>
+
+                  <Box w="full">
+                    <HStack mb={2} justify="space-between">
+                      <HStack>
+                        <Box color="gray.500">
+                          <FaLock />
+                        </Box>
+                        <Text color="gray.600" fontWeight="medium">
+                          Contraseña
+                        </Text>
+                      </HStack>
+                      {password.length > 0 && (
+                        <Text fontSize="sm" color={`${passwordStrength.color}.500`} fontWeight="medium">
+                          {passwordStrength.label}
+                        </Text>
+                      )}
+                    </HStack>
+                    <Input
+                      type="password"
+                      value={password}
+                      onChange={(e) => setPassword(e.target.value)}
+                      placeholder="Mínimo 12 caracteres"
+                      bg="gray.50"
+                      border="2px"
+                      borderColor="gray.200"
+                      borderRadius="lg"
+                      h={12}
+                      _hover={{ borderColor: 'purple.300' }}
+                      _focus={{ borderColor: 'purple.500', bg: 'white' }}
+                      required
+                    />
+                  </Box>
+
+                  <Box w="full">
+                    <HStack mb={2} justify="space-between">
+                      <HStack>
+                        <Box color="gray.500">
+                          <FaLock />
+                        </Box>
+                        <Text color="gray.600" fontWeight="medium">
+                          Confirmar Contraseña
+                        </Text>
+                      </HStack>
+                      {confirmPassword.length > 0 && (
+                        <Box color={passwordsMatch ? 'green.500' : 'red.500'}>
+                          {passwordsMatch ? <FaCheckCircle /> : <FaTimesCircle />}
+                        </Box>
+                      )}
+                    </HStack>
+                    <Input
+                      type="password"
+                      value={confirmPassword}
+                      onChange={(e) => setConfirmPassword(e.target.value)}
+                      placeholder="Repite tu contraseña"
+                      bg="gray.50"
+                      border="2px"
+                      borderColor="gray.200"
+                      borderRadius="lg"
+                      h={12}
+                      _hover={{ borderColor: 'purple.300' }}
+                      _focus={{ borderColor: 'purple.500', bg: 'white' }}
+                      required
+                    />
+                  </Box>
+
+                  <Button
+                    type="submit"
+                    w="full"
+                    h={12}
+                    size="lg"
+                    colorScheme="blue"
+                    bgGradient="linear(to-r, blue.500, purple.500)"
+                    _hover={{ 
+                      bgGradient: "linear(to-r, blue.600, purple.600)",
+                      transform: 'translateY(-2px)',
+                      boxShadow: 'lg'
+                    }}
+                    _active={{ transform: 'translateY(0)' }}
+                    transition="all 0.2s"
+                    borderRadius="lg"
+                    fontWeight="bold"
+                    disabled={isLoading}
+                  >
+                    <HStack gap={2}>
+                      <FaUserPlus />
+                      <Text>{isLoading ? 'Creando cuenta...' : 'Crear Cuenta'}</Text>
+                    </HStack>
+                  </Button>
+                </Stack>
+              </Box>
+
+              {/* Footer */}
+              <Box textAlign="center" pt={4}>
+                <Text color="gray.600">
+                  ¿Ya tienes una cuenta?{' '}
+                  <Text as="span" color="blue.500" fontWeight="semibold">
+                    <RouterLink to="/login">Inicia sesión aquí</RouterLink>
+                  </Text>
+                </Text>
+              </Box>
+            </Stack>
+          </Box>
+        </MotionBox>
+      </Container>
+    </Box>
   );
 };
 
-export default Register; 
+export default Register;

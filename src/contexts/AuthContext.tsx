@@ -26,12 +26,12 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
   const login = async (email: string, password: string) => {
     try {
       const response = await authService.login(email, password);
-      if (!response.result || !response.result.token || !response.result.username) {
+      if (!response.data || !response.data.token || !response.data.email) {
         throw new Error(response.message || 'Login failed. Please try again.');
       }
-      const userData = { token: response.result.token, email: response.result.username };
-      localStorage.setItem('token', response.result.token);
-      localStorage.setItem('email', response.result.username);
+      const userData = { token: response.data.token, email: response.data.email };
+      localStorage.setItem('token', response.data.token);
+      localStorage.setItem('email', response.data.email);
       setUser(userData);
       console.log('Usuario autenticado en AuthContext:', userData);
     } catch (err: any) {
@@ -48,12 +48,12 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
   const register = async (email: string, password: string) => {
     try {
       const response = await authService.register(email, password);
-      if (!response.result || !response.result.token || !response.result.username) {
+      if (!response.data || !response.data.token || !response.data.email) {
         throw new Error(response.message || 'Registration failed. Please try again.');
       }
-      const userData = { token: response.result.token, email: response.result.username };
-      localStorage.setItem('token', response.result.token);
-      localStorage.setItem('email', response.result.username);
+      const userData = { token: response.data.token, email: response.data.email };
+      localStorage.setItem('token', response.data.token);
+      localStorage.setItem('email', response.data.email);
       setUser(userData);
       console.log('Usuario autenticado en AuthContext:', userData);
     } catch (err: any) {
